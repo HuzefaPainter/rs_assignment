@@ -15,7 +15,7 @@ class ActivitiesTest < ApplicationSystemTestCase
     click_on "New activity"
 
     fill_in "Description", with: @activity.description
-    fill_in "Duration minutes", with: @activity.duration_minutes
+    fill_in "Duration", with: @activity.duration
     fill_in "Title", with: @activity.title
     click_on "Create Activity"
 
@@ -28,7 +28,7 @@ class ActivitiesTest < ApplicationSystemTestCase
     click_on "Edit this activity", match: :first
 
     fill_in "Description", with: @activity.description
-    fill_in "Duration minutes", with: @activity.duration_minutes
+    fill_in "Duration", with: @activity.duration
     fill_in "Title", with: @activity.title
     click_on "Update Activity"
 

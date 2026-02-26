@@ -10,11 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_26_140624) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_26_172421) do
   create_table "activities", force: :cascade do |t|
     t.string "title", null: false
     t.text "description"
-    t.integer "duration_minutes", default: 5, null: false
+    t.integer "duration", default: 5, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "frequency"
+    t.integer "category_id", null: false
+    t.index ["category_id"], name: "index_activities_on_category_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -23,7 +32,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_140624) do
     t.integer "program_day_id", null: false
     t.integer "activity_id", null: false
     t.string "sort_order", default: "0", null: false
-    t.string "integer"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["activity_id"], name: "index_day_activities_on_activity_id"
@@ -58,6 +66,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_140624) do
     t.index ["user_id"], name: "index_user_activity_completions_on_user_id"
   end
 
+  create_table "user_programs", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "program_id", null: false
+    t.datetime "start_date"
+    t.boolean "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_id", "user_id"], name: "index_user_programs_on_program_id_and_user_id", unique: true
+    t.index ["program_id"], name: "index_user_programs_on_program_id"
+    t.index ["user_id"], name: "index_user_programs_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -66,9 +86,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_140624) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "activities", "categories"
   add_foreign_key "day_activities", "activities"
   add_foreign_key "day_activities", "program_days"
   add_foreign_key "program_days", "programs"
   add_foreign_key "user_activity_completions", "day_activities"
   add_foreign_key "user_activity_completions", "users"
+  add_foreign_key "user_programs", "programs"
+  add_foreign_key "user_programs", "users"
 end

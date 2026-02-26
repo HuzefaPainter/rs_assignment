@@ -1,6 +1,83 @@
 class ProgramDaysController < ApplicationController
   before_action :set_program_day, only: %i[ show edit update destroy ]
 
+  def current_day_data
+    user_id = params[:user_id]
+    program_id = params[:program_id]
+
+    program = Program.find(program_id)
+
+    begin
+      user_program = UserProgram.find(user_id:, program_id:)
+    rescue
+      error_with_message("Please enroll for the program first")
+    end
+
+    # If international datetime then convert to local time as well
+    # based on user data
+    started = user_program.start_date.beginning_of_day
+    today = Time.now.beginning_of_day
+    days_passed = ((today - started).to_i/1.day).floor
+    program_day = ProgramDay.find_by(program_id:, day: days_passed + 1)
+    day_activities = DayActivity.get_activities(program_day.id)
+    day_activity_ids = day_activities.collect { |x| x.day_activity_id }
+    completed_activities = UserActivityCompletion.get_completed_day_activity_ids(user_id, day_activity_ids)
+    ok_with_data({
+      activities: day_activities.map do |da|
+        # Could make a serializer to avoid duplicates for app side data of activities
+        {
+          id: da.id,
+          title: da.title,
+          duration: da.duration,
+          frequency: da.frequency,
+          category: da.category_title,
+          completed: completed_activities.include?(da.day_activity_id)
+        }
+      end
+    })
+  end
+
+  def get_day_data
+    user_id = params[:user_id]
+    program_id = params[:program_id]
+    program_day_id = params[:program_day_id]
+
+    begin
+      user_program = UserProgram.find_by(user_id:, program_id:)
+    rescue
+      return error_with_message("Please enroll for the program first (debug link: localhost:3000/admin/users/:user_id/enroll_to_program/:program_id")
+    end
+
+    day_activities = DayActivity.get_activities(program_day_id)
+    day_activity_ids = day_activities.collect { |x| x.day_activity_id }
+    completed_activities = UserActivityCompletion.get_completed_day_activity_ids(user_id, day_activity_ids)
+
+    # TODO: To make this faster can combine both queries together and use
+    # postgres jsonb based query to get entire individual activity data
+    # with its completion status in a single query
+
+    ok_with_data({
+      activities: day_activities.map do |da|
+        # Could make a serializer to avoid duplicates for app side data of activities
+        {
+          id: da.id,
+          title: da.title,
+          # Assuming app converts duration seconds to minutes if and when required
+          # Else just render the text "5 mins" etc here and send to avoid
+          # app build updates
+          duration: da.duration,
+          # Assuming frequency is just user sided text, since the provided table
+          # didnt make sense w.r.t frequency, for ex. 3 times a week had checkmarks
+          # for day 1, 4, and 7. This would lead to 4 days having back to back the
+          # same activity, which maybe destroys the purpose of having gaps.
+          frequency: da.frequency,
+          category: da.category_title,
+          completed: completed_activities.include?(da.day_activity_id)
+        }
+      end
+    })
+  end
+
   # GET /program_days or /program_days.json
   def index
     @program_days = ProgramDay.all

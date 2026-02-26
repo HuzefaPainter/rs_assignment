@@ -65,6 +65,6 @@ class DayActivitiesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def day_activity_params
-      params.expect(day_activity: [ :program_day_id, :activity_id, :sort_order, :integer ])
+      params.expect(day_activity: [ :program_day_id, :activity_id, :sort_order ])
     end
 end

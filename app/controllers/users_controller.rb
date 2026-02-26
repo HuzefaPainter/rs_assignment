@@ -1,6 +1,26 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy ]
 
+  # Could use Devise for user auth, for now just using id for apis
+
+  def enroll_to_program
+    user_id = params[:user_id]
+    program_id = params[:program_id]
+    # If we want to choose the start date, say they have bought this program
+    # before childbirth, then we could choose one via params and set a nightly
+    # routine to activate all plans with todays start date
+    begin
+      user_program = UserProgram.new(user_id:, program_id:, start_date: Time.now, active: true)
+      user_program.save
+      ok_with_data({ message: "Successfully enrolled for the program" })
+    rescue
+      # If we want to allow multiple enrollments, say a second child,
+      # then we must remove the unique user -> program key. And then also
+      # check the latest enrollment for active: true
+      error_with_message("You have already enrolled for this program.")
+    end
+  end
+
   # GET /users or /users.json
   def index
     @users = User.all
