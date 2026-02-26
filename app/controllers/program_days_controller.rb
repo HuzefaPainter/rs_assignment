@@ -24,7 +24,6 @@ class ProgramDaysController < ApplicationController
     completed_activities = UserActivityCompletion.get_completed_day_activity_ids(user_id, day_activity_ids)
     ok_with_data({
       activities: day_activities.map do |da|
-        # Could make a serializer to avoid duplicates for app side data of activities
         {
           id: da.id,
           title: da.title,
@@ -70,6 +69,11 @@ class ProgramDaysController < ApplicationController
           # didnt make sense w.r.t frequency, for ex. 3 times a week had checkmarks
           # for day 1, 4, and 7. This would lead to 4 days having back to back the
           # same activity, which maybe destroys the purpose of having gaps.
+          # Also, frequency could be its own model if needed for UI purposes.
+          # Seems like the app screenshot has various colors for the different
+          # frequencies. But some "Maximise" have the same color. So unsure
+          # about that as well. Did not have enough time to implement this
+          # anyways :/
           frequency: da.frequency,
           category: da.category_title,
           completed: completed_activities.include?(da.day_activity_id)
