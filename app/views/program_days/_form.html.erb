@@ -1,0 +1,27 @@
+<%= form_with(model: program_day) do |form| %>
+  <% if program_day.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(program_day.errors.count, "error") %> prohibited this program_day from being saved:</h2>
+
+      <ul>
+        <% program_day.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :program_id, style: "display: block" %>
+    <%= form.text_field :program_id %>
+  </div>
+
+  <div>
+    <%= form.label :day, style: "display: block" %>
+    <%= form.number_field :day %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,11 @@
+<% content_for :title, "New program day" %>
+
+<h1>New program day</h1>
+
+<%= render "form", program_day: @program_day %>
+
+<br>
+
+<div>
+  <%= link_to "Back to program days", program_days_path %>
+</div>

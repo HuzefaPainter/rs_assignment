@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Program days" %>
+
+<h1>Program days</h1>
+
+<div id="program_days">
+  <% @program_days.each do |program_day| %>
+    <%= render program_day %>
+    <p>
+      <%= link_to "Show this program day", program_day %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New program day", new_program_day_path %>

@@ -1,0 +1,12 @@
+<% content_for :title, "Editing day activity" %>
+
+<h1>Editing day activity</h1>
+
+<%= render "form", day_activity: @day_activity %>
+
+<br>
+
+<div>
+  <%= link_to "Show this day activity", @day_activity %> |
+  <%= link_to "Back to day activities", day_activities_path %>
+</div>

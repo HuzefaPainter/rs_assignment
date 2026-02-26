@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  day_activity: one
+  completed_at: 2026-02-26 19:36:24
+  status: MyString
+
+two:
+  user: two
+  day_activity: two
+  completed_at: 2026-02-26 19:36:24
+  status: MyString
